@@ -1,0 +1,153 @@
+.auth-bg {
+    background-image: url(/nit/master/img/bg2.jpg);
+    height: 100%;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+.login-dash-cercle-one {
+    width: 133px;
+    height: 65px;
+    border-bottom-left-radius: 500px;
+    border-bottom-right-radius: 500px;
+    background: #EA4335;
+    right: 35%;
+    top: 0px;
+    opacity: 0.5;
+    animation: animation-1 8s ease-in 1s infinite alternate;
+}
+
+.login-dash-cercle-two {
+    width: 66px;
+    height: 126px;
+    border-top-left-radius: 500px;
+    border-bottom-left-radius: 500px;
+    background: #FBBC05;
+    right: 0px;
+    bottom: 80px;
+    animation: animation-2 6s ease-in 1s infinite alternate;
+}
+
+.login-dash-cercle-three {
+    width: 100px;
+    height: 192px;
+    border-top-right-radius: 500px;
+    border-bottom-right-radius: 500px;
+    background: #4285F4;
+    left: 0px;
+    top: 57px;
+    opacity: 0.5;
+}
+
+.login-dash-cercle-four {
+    width: 115px;
+    height: 57px;
+    border-top-left-radius: 500px;
+    border-top-right-radius: 500px;
+    background: #EA4335;
+    left: 240px;
+    bottom: 0px;
+}
+
+.login-dash-cercle-five {
+    width: 50px;
+    height: 50px;
+    background: #FBBC05;
+    border-radius: 50%;
+    left: 320px !important;
+    top: 40%;
+    opacity: 0.5;
+    animation: animation-5 3s ease-in 1s infinite alternate;
+}
+
+.login-dash-cercle-eight {
+    width: 50px;
+    height: 50px;
+    background: #EA4335;
+    border-radius: 50%;
+    right: 200px;
+    top: 40%;
+    animation: animation-8 2s ease-in 1s infinite alternate;
+}
+
+.login-dash-cercle-ten {
+    width: 40px;
+    height: 40px;
+    background: #34A853;
+    border-radius: 50%;
+    right: 20%;
+    top: 70%;
+    opacity: 0.5;
+    animation: animation-10 3s ease-in 1s infinite alternate;
+}
+
+@keyframes animation-1 {
+    0% {
+        right: 35%;
+        top: 0px;
+    }
+
+    100% {
+        right: 65%;
+        top: 0px;
+    }
+}
+
+@keyframes animation-5 {
+    0% {
+        left: 150px;
+        top: 40%;
+    }
+
+    100% {
+        left: 150px;
+        top: 30%;
+    }
+}
+
+@keyframes animation-8 {
+    0% {
+        right: 200px;
+        top: 40%;
+    }
+
+    100% {
+        right: 200px;
+        top: 60%;
+    }
+}
+
+@keyframes animation-10 {
+    0% {
+        right: 20%;
+        top: 70%;
+    }
+
+    100% {
+        right: 28%;
+        top: 70%;
+    }
+}
+
+@keyframes scale-up-centers {
+    0% {
+        -webkit-transform: scale(1);
+        transform: scale(1)
+    }
+
+    100% {
+        -webkit-transform: scale(.9);
+        transform: scale(.9)
+    }
+}
+
+.logo-scale-up {
+    animation: scale-up-centers 5s ease-in-out 1s infinite alternate;
+}
+
+.logo-slogan {
+    text-shadow: 2px 3px 8px #5068ec;
+    font-size: 2rem;
+}

@@ -1,0 +1,401 @@
+.table-responsive--lg tbody tr:first-child td {
+  border-top: none;
+}
+
+@media (max-width: 767px) {
+  .table-responsive--sm table .user {
+    justify-content: flex-end;
+  }
+
+  .table-responsive--sm table .user .name {
+    width: auto;
+  }
+
+  table thead th:first-child {
+    border-radius: 0;
+  }
+
+  table thead th:last-child {
+    border-radius: 0;
+  }
+
+  table.dataTable .user {
+    justify-content: flex-start;
+  }
+
+  table.dataTable .user .name {
+    width: calc(100% - 40px);
+  }
+
+  .table-responsive--sm table.dataTable .user {
+    justify-content: flex-end;
+  }
+
+  .table-responsive--sm table.dataTable .user .name {
+    width: auto;
+  }
+}
+
+@media (max-width: 1199px) {
+  .table-responsive--lg thead {
+    display: none;
+  }
+
+  table thead th:first-child {
+    border-radius: 0;
+  }
+
+  table thead th:last-child {
+    border-radius: 0;
+  }
+
+  .table-responsive--lg tbody tr:nth-child(odd) {
+    background-color: #e2e2e233;
+  }
+
+  .table-responsive--lg tbody tr:nth-child(odd) td {
+    border-top: 1px solid #10163a17;
+  }
+
+  .table-responsive--lg tr th,
+  .table-responsive--lg tr td {
+    display: block;
+    padding-left: 45% !important;
+    text-align: right !important;
+  }
+
+  .table-responsive--lg .user-table-list,
+  .table-responsive--lg .customer-details {
+    justify-content: flex-end;
+  }
+
+  .table-responsive--lg [data-label]::before {
+    display: block;
+  }
+
+  .table-responsive--lg table.dataTable .user {
+    justify-content: flex-end;
+  }
+
+  .table-responsive--lg table.dataTable .user .name {
+    width: auto;
+  }
+
+  .table-responsive--lg table .user {
+    justify-content: flex-end;
+  }
+
+  .table-responsive--lg table .user .name {
+    width: auto;
+  }
+}
+
+@media (max-width: 991px) {
+  .table-responsive--md thead {
+    display: none;
+  }
+
+  table thead th:first-child {
+    border-radius: 0;
+  }
+
+  table thead th:last-child {
+    border-radius: 0;
+  }
+
+  .table-responsive--md tbody tr:nth-child(odd) {
+    background-color: #e2e2e233;
+  }
+
+  .table-responsive--md tbody tr:nth-child(odd) td {
+    border-top: 1px solid #10163a17;
+  }
+
+  .table-responsive--md tbody tr:first-child td:first-child {
+    border-top: none;
+  }
+
+  .table-responsive--md tr th,
+  .table-responsive--md tr td {
+    display: block;
+    padding-left: 45% !important;
+    text-align: right !important;
+  }
+
+  *[class*='table-responsive--'] tr td.text-center,
+  .table-responsive tr td.text-center {
+    text-align: center !important;
+    padding-left: 0 !important;
+  }
+
+  .table-responsive--md .user-table-list,
+  .table-responsive--md .customer-details {
+    justify-content: flex-end;
+  }
+
+  .table-responsive--md [data-label]::before {
+    display: block;
+  }
+
+  .table-responsive--md table.dataTable .user {
+    justify-content: flex-end;
+  }
+
+  .table-responsive--md table.dataTable .user .name {
+    width: auto;
+  }
+
+  .table-responsive--md table .user {
+    justify-content: flex-end;
+  }
+
+  .table-responsive--md table .user .name {
+    width: auto;
+  }
+}
+
+@media (max-width: 767px) {
+  .table-responsive--sm thead {
+    display: none;
+  }
+
+  table thead th:first-child {
+    border-radius: 0;
+  }
+
+  table thead th:last-child {
+    border-radius: 0;
+  }
+
+  .table-responsive--sm tbody tr:nth-child(odd) {
+    background-color: #e2e2e233;
+  }
+
+  .table-responsive--sm tbody tr:nth-child(odd) td {
+    border-top: 1px solid #10163a17;
+  }
+
+  .table-responsive--sm tbody tr:first-child td:first-child {
+    border-top: none;
+  }
+
+  .table-responsive--sm tr th,
+  .table-responsive--sm tr td {
+    display: block;
+    padding-left: 45% !important;
+    text-align: right !important;
+  }
+
+  .table-responsive--sm .user-table-list,
+  .table-responsive--sm .customer-details {
+    justify-content: flex-end;
+  }
+
+  .table-responsive--sm [data-label]::before {
+    display: block;
+  }
+}
+
+@media (max-width: 575px) {
+  .table-responsive--xs thead {
+    display: none;
+  }
+
+  table thead th:first-child {
+    border-radius: 0;
+  }
+
+  table thead th:last-child {
+    border-radius: 0;
+  }
+
+  .table-responsive--xs tbody tr:nth-child(odd) {
+    background-color: #e2e2e233;
+  }
+
+  .table-responsive--xs tr th,
+  .table-responsive--xs tr td {
+    display: block;
+    padding-left: 45% !important;
+    text-align: right !important;
+  }
+
+  .table-responsive--xs .user-table-list,
+  .table-responsive--xs .customer-details {
+    justify-content: flex-end;
+  }
+
+  .table-responsive--xs [data-label]::before {
+    display: block;
+  }
+}
+
+@media (max-width: 1199px) {
+
+  *[class*='table-responsive--'].data-label--none tr th,
+  *[class*='table-responsive--'].data-label--none tr td {
+    padding-left: 0.75rem;
+  }
+}
+
+*[class*='table-responsive--'] .table-dark tbody [data-label]::before {
+  color: #5b6e88;
+}
+
+@media (max-width: 1199px) {
+  .table-responsive--lg .table-dark tbody tr:nth-child(odd) {
+    background-color: #343a40;
+  }
+
+  .table-responsive--lg .table-dark tbody tr:nth-child(even) {
+    background-color: #222930;
+  }
+
+  .table-responsive--lg table.dataTable tbody tr td {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 991px) {
+  .table-responsive--md .table-dark tbody tr:nth-child(odd) {
+    background-color: #343a40;
+  }
+
+  .table-responsive--md .table-dark tbody tr:nth-child(even) {
+    background-color: #222930;
+  }
+
+  .table-responsive--md table.dataTable tbody tr td {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 767px) {
+  .table-responsive--sm .table-dark tbody tr:nth-child(odd) {
+    background-color: #343a40;
+  }
+
+  .table-responsive--sm .table-dark tbody tr:nth-child(even) {
+    background-color: #222930;
+  }
+
+  .table-responsive--sm table.dataTable tbody tr td {
+    white-space: normal;
+  }
+}
+
+@media (max-width: 575px) {
+  .table-responsive--xs .table-dark tbody tr:nth-child(odd) {
+    background-color: #343a40;
+  }
+
+  .table-responsive--xs .table-dark tbody tr:nth-child(even) {
+    background-color: #222930;
+  }
+}
+
+/* Modify the data-label CSS to hide by default and only show in responsive modes */
+*[class*='table-responsive--'] [data-label]::before {
+  content: attr(data-label);
+  position: absolute;
+  left: 1rem;
+  width: 40%;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-weight: 600;
+  text-align: left;
+  color: #495057;
+  opacity: 0.8;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: none; /* Hide by default - only show in responsive mode */
+}
+
+/* Make sure the data-label display attribute is properly toggled in responsive modes only */
+@media (max-width: 1199px) {
+  .table-responsive--lg [data-label]::before {
+    display: block !important; /* Only show in responsive mode */
+  }
+  
+  /* Enhanced card-like appearance for responsive rows */
+  .table-responsive--lg tbody tr {
+    box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .table-responsive--lg tbody tr:nth-child(odd) {
+    background-color: rgba(226, 226, 226, 0.2);
+  }
+  
+  .table-responsive--lg tr td {
+    position: relative;
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+}
+
+@media (max-width: 991px) {
+  .table-responsive--md [data-label]::before {
+    display: block !important;
+  }
+  
+  /* Enhanced card-like appearance for responsive rows */
+  .table-responsive--md tbody tr {
+    box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .table-responsive--md tbody tr:nth-child(odd) {
+    background-color: rgba(226, 226, 226, 0.2);
+  }
+  
+  .table-responsive--md tr td {
+    position: relative;
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .table-responsive--sm [data-label]::before {
+    display: block !important;
+  }
+  
+  /* Enhanced card-like appearance for responsive rows */
+  .table-responsive--sm tbody tr {
+    box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+  
+  .table-responsive--sm tbody tr:nth-child(odd) {
+    background-color: rgba(226, 226, 226, 0.2);
+  }
+  
+  .table-responsive--sm tr td {
+    position: relative;
+    padding-top: 1rem !important;
+    padding-bottom: 1rem !important;
+  }
+}
+
+@media (max-width: 575px) {
+  .table-responsive--xs [data-label]::before {
+    display: block !important;
+  }
+  
+  /* Enhanced card-like appearance for responsive rows */
+  .table-responsive--xs tbody tr {
+    box-shadow: 0 5px 10px rgba(0,0,0,0.05);
+    margin-bottom: 1rem;
+    border-radius: 10px;
+    overflow: hidden;
+  }
+}
