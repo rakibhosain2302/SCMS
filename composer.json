@@ -12,7 +12,8 @@
         "php": "^8.3",
         "laravel/framework": "^13.17",
         "laravel/tinker": "^3.0",
-        "nit/master": "dev-master"
+        "nit/master": "dev-master",
+        "scms/finance": "dev-master"
     },
     "require-dev": {
         "fakerphp/faker": "^1.23",
@@ -91,6 +92,10 @@
         {
             "type": "path",
             "url": "/var/www/NIT/packages/nit-master"
+        },
+        {
+            "type": "path",
+            "url": "/var/www/NIT/packages/scms-finance"
         }
     ]
 }

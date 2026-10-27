@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "3b0b2a0d635239bd9ecb0b852321300f",
+    "content-hash": "94b9f2b8d7d8ebc8b04c84234273a940",
     "packages": [
         {
             "name": "brick/math",
@@ -2470,7 +2470,7 @@
             "dist": {
                 "type": "path",
                 "url": "/var/www/NIT/packages/nit-master",
-                "reference": "3d982352b755959184ad757ce4b2cfa8ce225008"
+                "reference": "cc38191fca1320815bb693356b54c3b6b108a1c3"
             },
             "require": {
                 "laravel/framework": "^11.0|^12.0|^13.0",
@@ -3330,6 +3330,74 @@
                 "source": "https://github.com/ramsey/uuid/tree/4.9.4"
             },
             "time": "2026-09-16T11:39:30+00:00"
+        },
+        {
+            "name": "scms/finance",
+            "version": "dev-master",
+            "dist": {
+                "type": "path",
+                "url": "/var/www/NIT/packages/scms-finance",
+                "reference": "8d71cef28744509857fda326b3e1daf57b8802cc"
+            },
+            "require": {
+                "brick/math": "^0.12|^0.13|^0.14|^1.0",
+                "laravel/framework": "^12.0|^13.0",
+                "php": "^8.3"
+            },
+            "require-dev": {
+                "nit/master": "dev-master",
+                "orchestra/testbench": "^10.0|^11.0",
+                "phpunit/phpunit": "^11.0|^12.0"
+            },
+            "suggest": {
+                "nit/master": "Branches, roles/abilities, activity log and the admin layout used by the bundled screens."
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "SCMS\\Finance\\SCMSFinanceServiceProvider"
+                    ]
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "SCMS\\Finance\\": "src/",
+                    "SCMS\\Finance\\Database\\Seeders\\": "database/seeders/"
+                }
+            },
+            "autoload-dev": {
+                "psr-4": {
+                    "SCMS\\Finance\\Tests\\": "tests/"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ]
+            },
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Rakib Hosain",
+                    "email": "rakibhosain2302@gmail.com",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Double-entry finance and accounting for Laravel: chart of accounts, journal, savings, loans, income, expense, cash, bank, transfers and reports.",
+            "keywords": [
+                "accounting",
+                "cooperative",
+                "double-entry",
+                "laravel",
+                "loans",
+                "savings"
+            ],
+            "transport-options": {
+                "relative": false
+            }
         },
         {
             "name": "symfony/clock",
@@ -8517,7 +8585,8 @@
     "aliases": [],
     "minimum-stability": "stable",
     "stability-flags": {
-        "nit/master": 20
+        "nit/master": 20,
+        "scms/finance": 20
     },
     "prefer-stable": true,
     "prefer-lowest": false,
