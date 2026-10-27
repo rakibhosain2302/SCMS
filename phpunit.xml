@@ -23,9 +23,11 @@
         <env name="BCRYPT_ROUNDS" value="4"/>
         <env name="BROADCAST_CONNECTION" value="null"/>
         <env name="CACHE_STORE" value="array"/>
-        <env name="DB_CONNECTION" value="sqlite"/>
-        <env name="DB_DATABASE" value=":memory:"/>
-        <env name="DB_URL" value=""/>
+        <!-- A separate MariaDB database: the finance package relies on row locks and CHECK constraints.
+             Host and credentials come from .env; tests/TestCase.php refuses any other database name. -->
+        <env name="DB_CONNECTION" value="mariadb" force="true"/>
+        <env name="DB_DATABASE" value="scms_test" force="true"/>
+        <env name="DB_URL" value="" force="true"/>
         <env name="MAIL_MAILER" value="array"/>
         <env name="QUEUE_CONNECTION" value="sync"/>
         <env name="SESSION_DRIVER" value="array"/>
