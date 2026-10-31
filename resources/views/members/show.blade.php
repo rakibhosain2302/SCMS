@@ -7,6 +7,7 @@
 <a href="{{ route('members.edit', $member) }}" class="btn btn-sm btn-light fw-bold"><i class="fas fa-pen" aria-hidden="true"></i> {{ __('Edit') }}</a>
 @endcan
 <button type="button" class="btn btn-sm btn-light fw-bold" onclick="window.print()"><i class="fas fa-print" aria-hidden="true"></i> {{ __('Print') }}</button>
+<a href="{{ route('members.statement', $member) }}" target="_blank" rel="noopener" class="btn btn-sm btn-light fw-bold"><i class="fas fa-file-invoice" aria-hidden="true"></i> {{ __('Statement') }}</a>
 @endpush
 
 @section('content')
@@ -59,6 +60,9 @@
         <div class="fin-tile"><small>{{ __('Loan outstanding (principal)') }}</small><strong>{{ $totals['loans']->format() }}</strong></div>
         <div class="fin-tile"><small>{{ __('Overdue') }}</small><strong @class(['fin-neg' => $totals['overdue']->isPositive()])>{{ $totals['overdue']->format() }}</strong></div>
         <div class="fin-tile"><small>{{ __('Running loans') }}</small><strong>{{ nit_number($totals['running']) }}</strong></div>
+        <div class="fin-tile"><small>{{ __('Shares held') }}</small><strong>{{ $shares->format() }}</strong>
+            @if ($member->isActive())@can('finance_share_manage')<a href="{{ route('finance.shares.create', ['branch_id' => $member->branch_id, 'member_q' => $member->member_no, 'member_id' => $member->id]) }}" class="d-block fs-7 mt-1">{{ __('Sell shares') }}</a>@endcan @endif</div>
+        @if ($member->admission_fee)<div class="fin-tile"><small>{{ __('Admission fee paid') }}</small><strong>{{ nit_money($member->admission_fee) }}</strong></div>@endif
     </div>
 
     <x-nit::card :title="__('Savings accounts')" class="mt-5" :padding="false">

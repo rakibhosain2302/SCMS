@@ -4,6 +4,7 @@
 @push('buttons')
 @can('member_create')
 <a href="{{ route('members.create') }}" class="btn btn-sm btn-nit fw-bold"><i class="fas fa-user-plus" aria-hidden="true"></i> {{ __('Register member') }}</a>
+<a href="{{ route('members.import') }}" class="btn btn-sm btn-light fw-bold"><i class="fas fa-file-import" aria-hidden="true"></i> {{ __('Import') }}</a>
 @endcan
 @endpush
 

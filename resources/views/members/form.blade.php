@@ -33,6 +33,12 @@
                 <x-nit::input name="occupation" :label="__('Occupation')" :value="$member->occupation" />
                 <x-nit::input name="admission_date" type="date" :label="__('Admission date')" :value="$member->admission_date?->toDateString()" required />
             </div>
+            @if (! $editing && ($feeAccounts ?? null) !== null)
+                <div class="nx-form-grid mt-4">
+                    <x-nit::input name="admission_fee" inputmode="decimal" :label="__('Admission fee taken now')" :value="config('scms.admission_fee')" :hint="__('Booked as income with a receipt number. Empty = no fee.')" />
+                    <x-nit::select name="fee_cash_bank_account_id" :label="__('Received into')" :options="$feeAccounts" :placeholder="__('Choose…')" />
+                </div>
+            @endif
         </x-nit::card>
 
         <x-nit::card :title="__('Contact and address')" class="mt-5">

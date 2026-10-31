@@ -1,8 +1,29 @@
 # Samiti Management System — Architecture
 
-Status: inspection complete, no business modules built yet (2026-10-26).
-Everything under "Existing architecture" and "Reusable nit-master functionality" was
-checked against the code; everything after that is a proposal.
+Status: implemented (2026-10-31). Sections 1–12 below are the design written before the build
+(2026-10-26); the table that follows says where each part ended up. Deployment: [deployment.md](deployment.md).
+
+## Implementation status
+
+| Area | Where | Notes |
+|---|---|---|
+| Members (registration, number per branch, nominees, private documents, CSV import, statement, admission fee) | app: `app/Http/Controllers/Members`, `app/Services/MemberService.php`, `resources/views/members` | Member model = `scms-finance.models.member` |
+| Accounting engine, chart, journal, years, reports | `scms/finance` package (`packages/scms-finance`) | Ledger is the only source of balances |
+| Savings: schemes (incl. DPS / FDR term), accounts, deposits, withdrawals, interest, opening balances, arrears report | `scms/finance` | Withdrawals above `SCMS_FINANCE_WITHDRAWAL_APPROVAL_ABOVE` go through nit-master Approvals |
+| Share capital and dividend on shares | `scms/finance` (`ShareService`, `DividendService`) | Equity account 3300; dividend out of accumulated surplus of a closed year |
+| Loans: products (penalty rule, guarantors required), applications with guarantors and collateral, approval, disbursement, repayment with penalty, reschedule, interest waiver, write-off, recovery, running loans brought in (form and CSV) | `scms/finance` (`LoanService`, `LoanRepaymentService`, `LoanAdjustmentService`) | |
+| Cash & bank, transfers, bank reconciliation | `scms/finance` | |
+| Income / expense vouchers | `scms/finance` | Maker-checker: the writer cannot post (super admins excepted, `SCMS_FINANCE_SELF_POSTING`) |
+| Reports: daily/monthly activity, cash book, receipts & payments, ledger, trial balance, income & expenditure, balance sheet, loan portfolio, savings, savings in arrears, branches; CSV download | `scms/finance` | |
+| Dashboard | app: `DashboardController` | Uses `DashboardService` |
+| SMS to members (postings, installment reminders) | `scms/finance` (`SendMemberSms`, `finance:loan-reminders`) | `SCMS_FINANCE_SMS=true`; gateway from nit-master Settings › Mail & SMS |
+| Branch isolation | nit-master branches + `NitBranchAccess` + `branch.assigned` middleware | Staff without a branch see nothing (`SCMS_FINANCE_REQUIRE_BRANCH`) |
+| Roles | app: `config/rolepermission.php` | Field Officer, Cashier, Branch Manager, Accountant, Auditor |
+| Set-up | app: `php artisan scms:setup` | Admin, roles, chart, first branch, year, cash drawer |
+| Bangla | app: `lang/bn.json` | Editable on Settings › Translations |
+
+Not built: inter-branch transactions, a statutory (cooperative department) report format,
+a member self-service portal.
 
 ---
 

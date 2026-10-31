@@ -9,14 +9,18 @@ use App\Models\Member;
 use App\Models\MemberDocument;
 use App\Services\MemberService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Nit\Master\Attributes\Permission;
 use Nit\Master\Support\Branches;
+use Nit\Master\Support\CsvImport;
 use Nit\Master\Support\Table;
+use SCMS\Finance\Models\CashBankAccount;
 use SCMS\Finance\Models\JournalEntry;
 use SCMS\Finance\Models\LoanInstallment;
 use SCMS\Finance\Services\LedgerService;
+use SCMS\Finance\Services\ShareService;
 use SCMS\Finance\Support\Money;
 
 class MemberController extends Controller
@@ -48,7 +52,12 @@ class MemberController extends Controller
     #[Permission('member_create', 'Register members')]
     public function create(Request $request)
     {
-        return view('members.form', ['member' => new Member(['admission_date' => today()]), 'branches' => $this->branchOptions($request)]);
+        return view('members.form', [
+            'member' => new Member(['admission_date' => today()]),
+            'branches' => $this->branchOptions($request),
+            'feeAccounts' => $request->user()->can('member_fee_collect') ? CashBankAccount::query()->active()->with('branch:id,name')->orderBy('name')->get()
+                ->mapWithKeys(fn ($a) => [$a->id => $a->branch?->name.' · '.$a->label()])->all() : null,
+        ]);
     }
 
     #[Permission('member_create', 'Register members')]
@@ -93,6 +102,7 @@ class MemberController extends Controller
             'statuses' => MemberStatus::options(),
             'documentTypes' => MemberDocument::typeLabels(),
             'photo' => $member->documents->firstWhere('type', 'photo'),
+            'shares' => rescue(fn () => app(ShareService::class)->balance($member->id), Money::zero(), false),
         ]);
     }
 
@@ -160,6 +170,75 @@ class MemberController extends Controller
         $this->members->deleteDocument($document);
 
         return back()->with('success', __('Document deleted.'));
+    }
+
+    /** CSV columns of the member import; branch_code picks one of the user's branches. */
+    public const IMPORT_COLUMNS = [
+        'branch_code' => 'branch_code', 'member_no' => 'member_no', 'name' => 'name', 'name_bn' => 'name_bn', 'father_name' => 'father_name',
+        'mother_name' => 'mother_name', 'spouse_name' => 'spouse_name', 'gender' => 'gender', 'date_of_birth' => 'date_of_birth', 'nid' => 'nid',
+        'phone' => 'phone', 'email' => 'email', 'occupation' => 'occupation', 'present_address' => 'present_address',
+        'permanent_address' => 'permanent_address', 'admission_date' => 'admission_date',
+    ];
+
+    #[Permission('member_create', 'Register members')]
+    public function importForm()
+    {
+        return view('members.import', ['columns' => array_keys(self::IMPORT_COLUMNS), 'report' => session('import_report')]);
+    }
+
+    #[Permission('member_create', 'Register members')]
+    public function import(Request $request)
+    {
+        $request->validate(['file' => ['required', 'file', 'mimes:csv,txt', 'max:2048']]);
+        $branches = Branches::forUser($request->user())->mapWithKeys(fn ($b) => [strtoupper((string) $b->code) => $b->id]);
+        $rules = collect((new MemberRequest())->setUserResolver(fn () => $request->user())->rules())
+            ->only(['member_no', 'name', 'name_bn', 'father_name', 'mother_name', 'spouse_name', 'gender', 'date_of_birth', 'nid', 'phone', 'email', 'occupation', 'present_address', 'permanent_address', 'admission_date'])
+            ->put('branch_id', ['required', 'integer', 'in:'.$branches->implode(',')])->all();
+
+        $report = CsvImport::run($request->file('file')->getRealPath(), self::IMPORT_COLUMNS, $rules,
+            fn (array $data) => $this->members->create($data, $request->user()),
+            $request->boolean('dry_run'),
+            fn (array $data) => ['branch_id' => $branches[strtoupper((string) ($data['branch_code'] ?? ''))] ?? null] + collect($data)->except('branch_code')->all(),
+        );
+
+        return redirect()->route('members.import')->with('import_report', $report);
+    }
+
+    /** A printable statement: each savings account and loan with its postings and running balance. */
+    #[Permission('member_view', 'View members')]
+    public function statement(Request $request, Member $member, LedgerService $ledger)
+    {
+        $data = $request->validate(['from' => ['nullable', 'date'], 'to' => ['nullable', 'date']]);
+        $to = isset($data['to']) ? Carbon::parse($data['to']) : today();
+        $from = isset($data['from']) ? Carbon::parse($data['from']) : $to->copy()->startOfYear();
+
+        $book = function (string $column, int $id, ?string $component, bool $credit) use ($ledger, $from, $to) {
+            $narrow = fn ($q) => $q->where("l.$column", $id)->when($component, fn ($q) => $q->where('l.component', $component));
+            $sign = fn (Money $net) => $credit ? $net->negated() : $net;
+            $balance = $sign($ledger->net($narrow($ledger->lines(null, null, $from->copy()->subDay()))));
+            $opening = $balance;
+            $rows = $narrow($ledger->lines(null, $from, $to))->orderBy('e.entry_date')->orderBy('e.id')
+                ->get(['l.debit', 'l.credit', 'e.number', 'e.entry_date', 'e.description'])
+                ->map(function ($row) use (&$balance, $sign) {
+                    $balance = $balance->plus($sign(Money::of((string) $row->debit)->minus((string) $row->credit)));
+                    $row->balance = $balance;
+
+                    return $row;
+                });
+
+            return ['opening' => $opening, 'rows' => $rows, 'closing' => $balance];
+        };
+
+        return view('members.statement', [
+            'member' => $member->load('branch'),
+            'from' => $from,
+            'to' => $to,
+            'savings' => $member->savingsAccounts()->with('scheme:id,name')->orderBy('id')->get()
+                ->map(fn ($a) => ['account' => $a] + $book('savings_account_id', $a->id, null, true)),
+            'loans' => $member->loans()->whereNotNull('disbursed_on')->orderBy('id')->get()
+                ->map(fn ($l) => ['loan' => $l] + $book('loan_id', $l->id, 'principal', false)),
+            'shares' => rescue(fn () => app(ShareService::class)->balance($member->id), Money::zero(), false),
+        ]);
     }
 
     /** @return array<int, string> */

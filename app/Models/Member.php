@@ -30,6 +30,7 @@ class Member extends Model
             'date_of_birth' => 'date',
             'admission_date' => 'date',
             'closed_on' => 'date',
+            'admission_fee' => 'decimal:2',
             'status' => MemberStatus::class,
         ];
     }

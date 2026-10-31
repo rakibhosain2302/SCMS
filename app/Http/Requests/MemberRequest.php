@@ -42,6 +42,8 @@ class MemberRequest extends FormRequest
             'permanent_address' => ['nullable', 'string', 'max:500'],
             'admission_date' => ['required', 'date', 'before_or_equal:today'],
             'note' => ['nullable', 'string', 'max:1000'],
+            'admission_fee' => $member || ! $this->user()?->can('member_fee_collect') ? ['prohibited'] : ['nullable', 'decimal:0,2', 'gte:0', 'max:9999999999'],
+            'fee_cash_bank_account_id' => $member ? ['prohibited'] : ['nullable', 'required_with:admission_fee', 'integer'],
 
             'nominees' => ['array', 'max:5'],
             'nominees.*.name' => ['required', 'string', 'max:150'],

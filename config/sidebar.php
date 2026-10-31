@@ -11,5 +11,6 @@ return [
         ['sl' => 0.5, 'header' => 'Members', 'permission' => ['member_view', 'member_create']],
         ['sl' => 0.6, 'title' => 'Members', 'icon' => 'fas fa-users', 'url' => '/members'],
         ['sl' => 0.7, 'title' => 'Register member', 'icon' => 'fas fa-user-plus', 'url' => '/members/create'],
+        ['sl' => 0.8, 'title' => 'Import members', 'icon' => 'fas fa-file-import', 'url' => '/members/import'],
     ],
 ];

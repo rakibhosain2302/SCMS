@@ -177,12 +177,62 @@ class MemberTest extends TestCase
         $this->assertSame(0, Member::query()->count());
     }
 
+    public function test_an_admission_fee_taken_at_registration_is_booked_as_income(): void
+    {
+        [, $cash] = $this->finance();
+        $this->actingAs($this->admin())->post('/members', $this->form(['admission_fee' => '200', 'fee_cash_bank_account_id' => $cash->id]))->assertSessionHasNoErrors();
+
+        $member = Member::query()->firstOrFail();
+        $this->assertSame('200.00', $member->admission_fee);
+        $this->assertNotNull($member->admission_fee_entry_id);
+        $this->assertSame('200.00', app(\SCMS\Finance\Services\LedgerService::class)->accountBalance(Account::query()->where('code', '4500')->firstOrFail())->toString());
+        $this->assertSame('200.00', app(\SCMS\Finance\Services\LedgerService::class)->cashBankBalance($cash->id)->toString());
+    }
+
+    public function test_staff_without_the_fee_ability_cannot_take_one(): void
+    {
+        [, $cash] = $this->finance();
+        $clerk = $this->user(['Member::member_view', 'Member::member_create'], [$this->alpha->id]);
+
+        $this->actingAs($clerk)->post('/members', $this->form(['admission_fee' => '200', 'fee_cash_bank_account_id' => $cash->id]))->assertSessionHasErrors('admission_fee');
+        $this->assertSame(0, Member::query()->withoutBranchScope()->count());
+    }
+
+    public function test_members_are_imported_from_csv_after_a_check(): void
+    {
+        $csv = "branch_code,member_no,name,phone,present_address,admission_date,nid\n"
+            ."ALP,,Rahima,01712345678,Mirpur,".today()->toDateString().",1234567890\n"
+            ."BET,,Karim,01812345678,Uttara,".today()->toDateString().",\n"
+            ."ALP,,Bad phone,123,Mirpur,".today()->toDateString().",\n";
+        $file = fn () => UploadedFile::fake()->createWithContent('members.csv', $csv);
+        $admin = $this->admin();
+
+        $this->actingAs($admin)->post('/members/import', ['file' => $file(), 'dry_run' => '1'])->assertRedirect('/members/import');
+        $this->assertSame(0, Member::query()->count());
+        $this->assertSame(2, session('import_report')['valid']);
+
+        $this->actingAs($admin)->post('/members/import', ['file' => $file()])->assertRedirect();
+        $this->assertSame(['ALP-000001', 'BET-000001'], Member::query()->orderBy('id')->pluck('member_no')->all());
+        $this->assertSame(1, count(session('import_report')['skipped']));
+    }
+
+    public function test_the_statement_shows_the_savings_ledger(): void
+    {
+        $admin = $this->admin();
+        $member = $this->member($this->alpha);
+        [$scheme, $cash] = $this->finance();
+        $account = app(SavingsService::class)->open(['branch_id' => $this->alpha->id, 'member_id' => $member->id, 'savings_scheme_id' => $scheme->id, 'opened_on' => today()->toDateString()], $admin);
+        app(SavingsTransactionService::class)->deposit($account, ['amount' => '750', 'transaction_date' => today()->toDateString(), 'cash_bank_account_id' => $cash->id], $admin);
+
+        $this->actingAs($admin)->get("/members/{$member->id}/statement")->assertOk()->assertSee($account->account_number)->assertSee('750.00');
+    }
+
     public function test_the_pages_render(): void
     {
         $admin = $this->admin();
         $member = $this->member($this->alpha);
 
-        foreach (['/members', '/members/create', "/members/{$member->id}", "/members/{$member->id}/edit", '/'] as $uri) {
+        foreach (['/members', '/members/create', '/members/import', "/members/{$member->id}", "/members/{$member->id}/edit", "/members/{$member->id}/statement", '/'] as $uri) {
             $this->actingAs($admin)->get($uri)->assertOk();
         }
     }

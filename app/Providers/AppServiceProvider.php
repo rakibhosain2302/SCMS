@@ -19,6 +19,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        // Number series of admission fees booked by MemberService (ADM-2026-000001).
+        config(['scms-finance.numbering.prefixes.admission' => 'ADM']);
     }
 }

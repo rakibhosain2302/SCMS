@@ -12,8 +12,14 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\ValidationException;
 use Nit\Master\Models\Branch;
 use Nit\Master\Support\Activity;
+use SCMS\Finance\Enums\LineComponent;
 use SCMS\Finance\Enums\LoanStatus;
 use SCMS\Finance\Enums\SavingsAccountStatus;
+use SCMS\Finance\Exceptions\FinanceException;
+use SCMS\Finance\Models\Account;
+use SCMS\Finance\Models\CashBankAccount;
+use SCMS\Finance\Services\JournalService;
+use SCMS\Finance\Support\Money;
 
 /**
  * Registration, changes, status and documents of members. Every write runs in one transaction;
@@ -39,8 +45,45 @@ class MemberService
 
             $this->syncNominees($member, $data['nominees'] ?? []);
 
+            if (Money::of($data['admission_fee'] ?? null)->isPositive()) {
+                $this->takeAdmissionFee($member, Money::of($data['admission_fee']), (int) $data['fee_cash_bank_account_id'], $user);
+            }
+
             return $member;
         });
+    }
+
+    /**
+     * Books the admission fee taken at registration (cash received, never a deposit):
+     *
+     *     Dr Cash/Bank    Cr Admission fees (income, member tagged)
+     */
+    private function takeAdmissionFee(Member $member, Money $fee, int $cashBankAccountId, Authenticatable $user): void
+    {
+        $cash = CashBankAccount::query()->withoutBranchScope()->with('account')->findOrFail($cashBankAccountId);
+        if ((int) $cash->branch_id !== (int) $member->branch_id) {
+            throw ValidationException::withMessages(['fee_cash_bank_account_id' => __('The cash or bank account belongs to another branch.')]);
+        }
+        $income = Account::query()->where('code', config('scms.admission_fee_account'))->firstOrFail();
+
+        try {
+            $entry = app(JournalService::class)->record([
+                'branch_id' => $member->branch_id,
+                'entry_date' => $member->admission_date->toDateString(),
+                'description' => __('Admission fee · :member', ['member' => $member->member_no.' '.$member->name]),
+                'reference' => $member->member_no,
+                'source_type' => 'member_admission',
+                'source_id' => $member->id,
+                'number_key' => 'admission',
+            ], [
+                JournalService::debit($cash->account, $fee, ['cash_bank_account_id' => $cash->id, 'member_id' => $member->id, 'component' => LineComponent::Fee]),
+                JournalService::credit($income, $fee, ['member_id' => $member->id, 'component' => LineComponent::Fee]),
+            ], $user);
+        } catch (FinanceException $e) {
+            throw ValidationException::withMessages(['admission_fee' => $e->getMessage()]);
+        }
+
+        $member->forceFill(['admission_fee' => $fee->toString(), 'admission_fee_entry_id' => $entry->id])->save();
     }
 
     /** @param  array<string, mixed>  $data */
